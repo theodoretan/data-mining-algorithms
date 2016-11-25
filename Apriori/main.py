@@ -12,4 +12,4 @@ dataset = []
 with open(args.filename, "r", encoding="utf-8") as f:
     for line in f:
         dataset.append(line.strip().split(","))
-itemset = apriori(dataset, args.support)
+itemlist = apriori(dataset, args.support)
