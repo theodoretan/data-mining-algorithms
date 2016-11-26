@@ -13,3 +13,4 @@ with open(args.filename, "r", encoding="utf-8") as f:
     for line in f:
         dataset.append(line.strip().split(","))
 itemlist = apriori(dataset, args.support)
+print(itemlist)
