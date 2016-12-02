@@ -30,7 +30,7 @@ def apriori(dataset, mins):
     # iset = {key: (value/total) for key, value in iset.items() if value/total >= mins}
     itemlist.append(iset)
     itemlist = _apriori(dataset, mins, total, itemlist, monotonicity)
-    return itemlist
+    return total, itemlist
 
 # NOTE: this is a recursive function
 def _apriori(dataset, mins, total, itemlist, monotonicity):
@@ -50,6 +50,7 @@ def _apriori(dataset, mins, total, itemlist, monotonicity):
         for item in iterlist:
             if set(item).issubset(set(entry)): # checks if itemset is in the entry
                 _iset[item] = 1 if item not in _iset else _iset[item]+1
+
     # check for minimum support
     for key, value in _iset.items():
         if value/total >= mins: iset[key] = value/total
@@ -59,3 +60,19 @@ def _apriori(dataset, mins, total, itemlist, monotonicity):
     itemlist.append(iset)
     itemlist = _apriori(dataset, mins, total, itemlist, monotonicity)
     return itemlist
+
+def associations(items, total, itemlist, confidence):
+
+    associations = []
+    main_item = list(combinations(items, len(items)))
+    
+    for i in range(1, len(items)):
+        combos = list(combinations(items, i))
+        for combo in combos:
+            if (len(combo) == 1):
+                combo, *r = combo
+            # print(combo)
+            if (itemlist[len(items)-1][main_item[0]]/itemlist[i-1][combo] > confidence):
+                associations.append("{} => {}".format(combo, list(set(items)-set([combo]))))
+                # print(set(items))
+    return associations
