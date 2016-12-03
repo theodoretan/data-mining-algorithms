@@ -15,8 +15,13 @@ with open(args.filename, "r", encoding="utf-8") as f:
         dataset.append(line.strip().split(args.delimiter))
 total, itemlist = apriori(dataset, args.support)
 
-# print(itemlist)
+# print(itemlist[0])
 if (len(itemlist) > 1):
+    print ("SUPPORT")
+    for items in itemlist[0]:
+        print("{}: {}".format(items, itemlist[0][items]))
+
+
     itemlist1 = itemlist[1:]
     association = []
     for items in itemlist1:
@@ -25,4 +30,8 @@ if (len(itemlist) > 1):
             if a != []: association.append(a)
             print("{}: {}".format(item, items[item]))
     print()
-    print(association)
+
+    print ("RULES")
+    for rulelist in association:
+        for rule in rulelist:
+            print(rule)

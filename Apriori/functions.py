@@ -73,6 +73,9 @@ def associations(items, total, itemlist, confidence):
                 combo, *r = combo
             # print(combo)
             if (itemlist[len(items)-1][main_item[0]]/itemlist[i-1][combo] > confidence):
-                associations.append("{} => {}".format(combo, list(set(items)-set([combo]))))
+                final = tuple(set(items)-set([combo]))
+                if len(final) == 1:
+                    final = final[0]
+                associations.append("{} => {}".format(combo, final))
                 # print(set(items))
     return associations
