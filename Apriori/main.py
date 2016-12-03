@@ -6,12 +6,13 @@ parser = ArgumentParser(description="The Apriori Algorithm to Mine Association R
 parser.add_argument("filename", type=str, help="The dataset filename (as a .csv)")
 parser.add_argument("support", type=float, help="The minimum support to reduce the search space")
 parser.add_argument("confidence", type=float, help="The minimum confidence for mining ARs")
+parser.add_argument("-d", dest="delimiter", type=str, help="The delimiter", default=",")
 args = parser.parse_args()
 
 dataset = []
 with open(args.filename, "r", encoding="utf-8") as f:
     for line in f:
-        dataset.append(line.strip().split(","))
+        dataset.append(line.strip().split(args.delimiter))
 total, itemlist = apriori(dataset, args.support)
 
 # print(itemlist)
