@@ -30,8 +30,9 @@ if (len(itemlist) > 1):
             if a != []: association.append(a)
             print("{}: {}".format(item, items[item]))
     print()
-
+    
     print ("RULES")
+    # print (association)
     for rulelist in association:
         for rule in rulelist:
             print(rule)
