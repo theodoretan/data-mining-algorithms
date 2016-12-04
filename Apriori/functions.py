@@ -35,19 +35,23 @@ def apriori(dataset, mins):
 def _new_itemsets(k, itemsets):
     large_itemsets = []
     item_set = set()
-    print(k)
-    print(itemsets)
+    # print(k)
+    # print(itemsets)
     for item1 in itemsets:
         for item2 in itemsets:
+            # print(item1, item2)
+            # print(set(item1) & set(item2))
+            # input()
+
             if (len(set(item1) & set(item2)) == (k-1)):
                 union = set(item1) | set(item2)
-                print(union)
+                # print(union)
                 if (len(union) == k+1):
-                    large_itemsets.append(list(tuple(union)))
+                    large_itemsets.append(tuple(sorted(union)))
 
     for i in large_itemsets:
-        if (tuple(i) not in item_set):
-            item_set.add(tuple(i))
+        if (i not in item_set):
+            item_set.add(i)
 
 
     # print (item_set)
@@ -63,6 +67,7 @@ def _apriori(dataset, mins, total, itemlist, monotonicity):
     if len(itemlist)+1 > len(itemlist[0]): return itemlist
     # iterlist = list(combinations(itemlist[0], len(itemlist)+1)) # creates the k+1 combinations
     iterlist = _new_itemsets(len(itemlist), itemlist[-1])
+    if iterlist == []: return itemlist
     # anti-monotonicity
     # iterlist = [x for x in iterlist if not any(set(m).issubset(set(x)) for m in monotonicity)]
 
@@ -82,7 +87,7 @@ def _apriori(dataset, mins, total, itemlist, monotonicity):
     if iset == {}: return itemlist
 
     # print(iset)
-    
+
     itemlist.append(iset)
     itemlist = _apriori(dataset, mins, total, itemlist, monotonicity)
     return itemlist
