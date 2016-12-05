@@ -19,7 +19,7 @@ total, itemlist = apriori(dataset, args.support)
 if (len(itemlist) > 1):
     print ("SUPPORT")
     for items in itemlist[0]:
-        print("{}: {}".format(items, itemlist[0][items]))
+        print("{}: {}".format(" ".join(items), itemlist[0][items]))
 
 
     itemlist1 = itemlist[1:]
@@ -28,7 +28,7 @@ if (len(itemlist) > 1):
         for item in items:
             a = associations(list(item), total, itemlist, args.confidence)
             if a != []: association.append(a)
-            print("{}: {}".format(item, items[item]))
+            print("{}: {}".format(", ".join(item), items[item]))
     print()
     
     print ("RULES")
