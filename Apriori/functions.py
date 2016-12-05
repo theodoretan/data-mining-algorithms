@@ -1,4 +1,5 @@
 from itertools import combinations
+import time
 
 def apriori(dataset, mins):
     """
@@ -44,10 +45,12 @@ def _new_itemsets(k, itemsets):
     """
     large_itemsets = []
     item_set = set()
-
+    itemsets = list(itemsets)
     # go through the k item set and look for k-1 combinations
-    for item1 in itemsets:
-        for item2 in itemsets:
+    for i in range(0, len(itemsets)):
+        for j in range(i, len(itemsets)):
+            item1 = itemsets[i]
+            item2 = itemsets[j]
             if (len(set(item1) & set(item2)) == (k-1)):
                 union = set(item1) | set(item2)
 
@@ -78,32 +81,33 @@ def _apriori(dataset, mins, total, itemlist):
         itemlist - the frequent itemlist
     ------------------------------------------------------
     """
-    # _iset is the initial set of all items
-    # iset is the new set of values above the minimum support
-    _iset, iset = {}, {}
-
-    # make sure we're still under the possible number of values
-    if len(itemlist)+1 > len(itemlist[0]): return itemlist
-
-    # creates the k+1 combinations
-    iterlist = _new_itemsets(len(itemlist), itemlist[-1])
-    if iterlist == []: return itemlist
-
-    # for each item in the iterlist, check if those values are in the dataset
-    for entry in dataset:
-        for item in iterlist:
-            if set(item).issubset(set(entry)): # checks if itemset is in the entry
-                _iset[item] = 1 if item not in _iset else _iset[item]+1
-
-    # check for minimum support
-    for key, value in _iset.items():
-        if value/total >= mins: iset[key] = value/total
-
-    if iset == {}: return itemlist
-
-    # add the itemset to the list of itemsets
-    itemlist.append(iset)
-    itemlist = _apriori(dataset, mins, total, itemlist)
+    while True:
+        # _iset is the initial set of all items
+        # iset is the new set of values above the minimum support
+        _iset, iset = {}, {}
+    
+        # make sure we're still under the possible number of values
+        if len(itemlist)+1 > len(itemlist[0]): return itemlist
+        
+        # creates the k+1 combinations
+        iterlist = _new_itemsets(len(itemlist), itemlist[-1])
+        if iterlist == []: return itemlist
+        
+        # for each item in the iterlist, check if those values are in the dataset
+        for entry in dataset:
+            for item in iterlist:
+                if set(item).issubset(set(entry)): # checks if itemset is in the entry
+                    _iset[item] = 1 if item not in _iset else _iset[item]+1
+                
+        # check for minimum support
+        for key, value in _iset.items():
+            if value/total >= mins: iset[key] = value/total
+        
+        if iset == {}: return itemlist
+        
+        # add the itemset to the list of itemsets
+        itemlist.append(iset)
+        # itemlist = _apriori(dataset, mins, total, itemlist)
     
     return itemlist
 

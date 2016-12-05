@@ -26,7 +26,6 @@ else:
 
 st = time.time()
 dataset = genfromtxt(args.filename, delimiter=args.delimiter, dtype=t)
-print(dataset)
 
 # Test to see if it actually works
 # l = [[random.randint(0, 100), random.randint(0, 100)] for j in range(100)]
