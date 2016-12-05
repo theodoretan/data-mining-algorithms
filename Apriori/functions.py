@@ -3,7 +3,7 @@ from itertools import combinations
 def apriori(dataset, mins):
     """
     ------------------------------------------------------
-    The Apriori Algorithm
+    The Apriori Algorithm.
     ------------------------------------------------------
     Inputs:
         dataset - dataset of m transactions (2d-list)
@@ -14,9 +14,8 @@ def apriori(dataset, mins):
     """
     # _iset is the initial set of all items
     # iset is the new set of values above the minimum support
-    # monotonicity is the list of values that are under the minimum support
     # itemlist is the list of large item sets
-    _iset, iset, monotonicity, itemlist = {}, {}, [], []
+    _iset, iset, itemlist = {}, {}, []
     total = 0
     # go through the dataset and count the number of time a value is in the data
     for entry in dataset:
@@ -26,52 +25,69 @@ def apriori(dataset, mins):
     # update the set of values above the minimum support and the values under the minimum support
     for key, value in _iset.items():
         if value/total >= mins: iset[tuple([key])] = value/total
-        else: monotonicity.append(key)
     # iset = {key: (value/total) for key, value in iset.items() if value/total >= mins}
     itemlist.append(iset)
-    itemlist = _apriori(dataset, mins, total, itemlist, monotonicity)
+    itemlist = _apriori(dataset, mins, total, itemlist)
     return total, itemlist
 
 def _new_itemsets(k, itemsets):
+    """
+    ------------------------------------------------------
+    Creates the k+1 Combinations.
+    ------------------------------------------------------
+    Inputs:
+        k - the size of the current set
+        itemsets - the k itemset
+    Returns:
+        itemset - the k+1 frequent itemset (list)
+    ------------------------------------------------------
+    """
     large_itemsets = []
     item_set = set()
-    # print(k)
-    # print(itemsets)
+
+    # go through the k item set and look for k-1 combinations
     for item1 in itemsets:
         for item2 in itemsets:
-            # print(item1, item2)
-            # print(set(item1) & set(item2))
-            # input()
-
             if (len(set(item1) & set(item2)) == (k-1)):
                 union = set(item1) | set(item2)
-                # print(union)
+
+                # if the length of the set is the size we are looking for then add it to the list
                 if (len(union) == k+1):
                     large_itemsets.append(tuple(sorted(union)))
 
+    # add the k+1 combinations to the set
     for i in large_itemsets:
         if (i not in item_set):
             item_set.add(i)
 
-
-    # print (item_set)
     return list(item_set)
 
-# NOTE: this is a recursive function
-def _apriori(dataset, mins, total, itemlist, monotonicity):
+
+def _apriori(dataset, mins, total, itemlist):
+    """
+    ------------------------------------------------------
+    The Recursive Apriori Algorithm.
+    ------------------------------------------------------
+    Inputs:
+        dataset - dataset of m transactions (2d-list)
+        mins - minimum support
+        total - the total number of entries in the
+            dataset
+        itemlist - the list of all the itemsets
+    Returns:
+        itemlist - the frequent itemlist
+    ------------------------------------------------------
+    """
     # _iset is the initial set of all items
     # iset is the new set of values above the minimum support
     _iset, iset = {}, {}
-    # print(itemlist)
+
     # make sure we're still under the possible number of values
     if len(itemlist)+1 > len(itemlist[0]): return itemlist
-    # iterlist = list(combinations(itemlist[0], len(itemlist)+1)) # creates the k+1 combinations
+
+    # creates the k+1 combinations
     iterlist = _new_itemsets(len(itemlist), itemlist[-1])
     if iterlist == []: return itemlist
-    # anti-monotonicity
-    # iterlist = [x for x in iterlist if not any(set(m).issubset(set(x)) for m in monotonicity)]
-
-    # print(iterlist)
 
     # for each item in the iterlist, check if those values are in the dataset
     for entry in dataset:
@@ -82,35 +98,43 @@ def _apriori(dataset, mins, total, itemlist, monotonicity):
     # check for minimum support
     for key, value in _iset.items():
         if value/total >= mins: iset[key] = value/total
-        else: monotonicity.append(key)
-    # iset = {key: (value/total) for key, value in iset.items() if value/total >= mins}
+
     if iset == {}: return itemlist
 
-    # print(iset)
-
+    # add the itemset to the list of itemsets
     itemlist.append(iset)
-    itemlist = _apriori(dataset, mins, total, itemlist, monotonicity)
+    itemlist = _apriori(dataset, mins, total, itemlist)
+    
     return itemlist
 
 def associations(items, total, itemlist, confidence):
-
+    """
+    ------------------------------------------------------
+    Mines the Association Rules.
+    ------------------------------------------------------
+    Inputs:
+        items - the item combination
+        total - the number of entries in the dataset
+        itemlist - the frequent itemlist
+        confidence - the minimum confidence
+    Returns:
+        associations - the association rules
+    ------------------------------------------------------
+    """
     associations = []
-    main_item = list(combinations(items, len(items)))
-    # print(main_item)
+    main_item = [tuple(items)]
+
+    # going through each item in the item combination
     for i in range(1, len(items)):
-        # print(items)
+        # create all the possible combinations for this item combination
         combos = list(combinations(items, i))
-        # print(combos)
+
+        # going through each generated combination
         for combo in combos:
-            # if (len(combo) == 1):
-            #     combo, *r = combo
-            # print(combo)
+
+            # the confidence is bigger than the min confidence, add it to the list
             if (itemlist[len(items)-1][main_item[0]]/itemlist[i-1][combo] > confidence):
                 final = tuple(set(items)-set(combo))
-                # print(itemlist[i-1], combo)
-                # if len(final) == 1:
-                #     final = final[0]
-                    # print("here")
                 associations.append("{} => {}".format(", ".join(combo), ", ".join(final)))
-                # print(set(items))
+
     return associations
