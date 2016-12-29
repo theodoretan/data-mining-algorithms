@@ -16,3 +16,12 @@ if ! hash pypy3.3 2>/dev/null; then
 else
   echo 'PyPy3.3 already installed on system.'
 fi
+
+# setup requirements
+if ! hash pip3 2>/dev/null; then
+  echo 'Need to install pip3'
+  apt-get -y install python3-pip
+fi
+
+echo 'Installing requirements'
+pip3 install -r requirements.txt
